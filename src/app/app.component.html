@@ -1,0 +1,309 @@
+
+<div class="toolbar" role="banner">
+  <img width="50" alt="Home Logo" src="../assets/home.png" />
+
+  <span class="title-text">Mortgage Calculator</span>
+ 
+</div>
+
+<div class="content-area" role="main">
+  <!-- Highlight Card -->
+  <div class="highlight-card card-small">
+    <p>
+      This calculator determines your mortgage payment and provides you with a
+      mortgage payment schedule. The calculator also shows how much money and
+      how many years you can save by making prepayments.
+      <strong> Note:</strong> As of July 9, 2012, the maximum amortization
+      period for mortgages with less than a 20 percent down payment is 25 years.
+    </p>
+  </div>
+
+  <!-- Mortgage calculator -->
+  <!-- <h5>Here are two calculators to help you get started:</h5> -->
+
+  <div class="card-container">
+    <div class="card">
+      <div class="card-title">Payment Plan</div>
+      <form class="form-container">
+        <div class="input-group mb-3">
+          
+          <label class="label-text">Loan Amount:</label>
+        </div>
+        <!-- </div> -->
+        <div class="input-group mb-3">
+          <input required
+            [(ngModel)]="loanAmount"
+            name="loanAmount"
+            type="number"
+            class="form-control"
+            min="100"
+            max="99999999"
+            placeholder="e.g. 100000"
+            aria-label="Default"
+            aria-describedby="inputGroup-sizing-default"
+          />
+         
+          <span class="input-group-text" id="inputGroup-sizing-default">$</span>
+        </div>
+
+        <div class="input-group mb-3">
+          
+          <label class="label-text">Interest Rate:</label>
+          <!-- </div> -->
+        </div>
+        <div class="input-group mb-3">
+          <input required
+            [(ngModel)]="interestRate"
+            name="interestRate"
+            type="number"
+            min="0"
+            max="100"
+            placeholder="e.g. 2.75"
+            class="form-control"
+            aria-label="Default"
+            aria-describedby="inputGroup-sizing-default"
+          />
+          <span class="input-group-text" id="inputGroup-sizing-default">%</span>
+        </div>
+        <div class="input-group mb-3">
+          
+          <label class="label-text"> Amortization Period:</label>
+        </div>
+        <div class="input-group mb-3">
+          <input required
+            [(ngModel)]="loanTerm"
+            name="loanTerm"
+            type="number"
+            min="1"
+           
+            max="25"
+            placeholder="e.g. 15"
+            class="form-control"
+            aria-label="Default"
+            aria-describedby="inputGroup-sizing-default"
+          />
+          <span class="input-group-text" id="inputGroup-sizing-default"
+            >years</span
+          >
+        </div>
+
+        <div class="input-group mb-3">
+          
+          <label class="label-text"> Payment Frequency:</label>
+          <!-- </div> -->
+        </div>
+        <div class="input-group mb-3">
+          <select 
+            [(ngModel)]="paymentFrequency"
+            name="paymentFrequency"
+            class="form-control"
+            aria-label="Default"
+            aria-describedby="inputGroup-sizing-default"
+          >
+            <!-- <option value="none" selected>Select an Option</option> -->
+            <option selected>Monthly</option>
+            <option>Semi-Monthly</option>
+            <option>Bi-Weekly</option>
+            <option>Weekly</option>
+            <option>Accelerated Bi-Weekly</option>
+            <option>Accelerated Weekly</option>
+          </select>
+        </div>
+        <div class="input-group mb-3">
+          
+          <label class="label-text"> Term:</label>
+          <!-- </div> -->
+        </div>
+        <div class="input-group mb-3">
+          <select
+            [(ngModel)]="term"
+            name="term"
+            class="form-control"
+            aria-label="Default"
+            aria-describedby="inputGroup-sizing-default"
+          >
+            <!-- <option value="none" selected>Select an Option</option> -->
+            <option selected>1 year</option>
+            <option>2 years</option>
+            <option>3 years</option>
+            <option>4 years</option>
+            <option>5 years</option>
+            <option>6 year</option>
+            <option>7 years</option>
+            <option>8 years</option>
+            <option>9 years</option>
+            <option>10 years</option>
+          </select>
+        </div>
+
+    
+   
+      </form>
+    </div>
+
+    <div></div>
+  </div>
+  <button type="button" class="btn btn-primary" (click)="calculatePayment()">
+    Calculate Payment
+  </button>
+</div>
+<div class="content-area">
+  <div class="card-container card-results" *ngIf="monthlyPayment">
+    <label class="label-text" class="label-text">Your Monthly Payment</label>
+    <p class="label-text">{{ monthlyPayment | currency }}</p>
+    <p class="sub-title-text">Your loan amount distribution is as follows</p>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th *ngFor="let thId of TableHeader" scope="col">{{ thId }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Number of Payments</th>
+          <td>{{ termCalculated }}</td>
+          <td>{{ totalNumberOfPayments }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Mortgage Payment</th>
+          <td>{{ monthlyPayment }}</td>
+          <td>{{ monthlyPayment }}</td>
+        </tr>
+      
+        <tr>
+          <th scope="row">Principal Payment</th>
+          <td>{{ totalPrincipalForTerm }}</td>
+          <td>{{ loanAmount }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Interest Payment</th>
+          <td>{{ totalInterestForTerm }}</td>
+          <td>{{ totalInterestOfMortgage }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Total Cost</th>
+          <td>{{ totalPrincipalForTerm + totalInterestForTerm }}</td>
+          <td>{{ totalCostOfMortgage }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- 
+View Graphs -->
+
+    <ng-template #content let-modal>
+      <div>
+        <!-- <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button> -->
+      </div>
+      <div class="modal-body">
+        <form>
+          <ul ngbNav #nav="ngbNav" class="nav-tabs">
+            <li ngbNavItem>
+              <a ngbNavLink>
+                <h6 class="modal-title" id="modal-basic-title">
+                  What you paid
+                </h6>
+              </a>
+              <ng-template ngbNavContent>
+                <div>
+                  <canvas
+                    baseChart
+                    [type]="'pie'"
+                    [datasets]="chartDataPie"
+                    [labels]="labels"
+                    [options]="chartOptions"
+                    [legend]="true"
+                  >
+                  </canvas>
+                </div>
+              </ng-template>
+            </li>
+            <li ngbNavItem>
+              <a ngbNavLink>
+                <h6 class="modal-title" id="modal-basic-title">
+                  Amortization Graph
+                </h6>
+              </a>
+              <ng-template ngbNavContent>
+                <div>
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [datasets]="chartData"
+                    [labels]="labelsForBar"
+                    [options]="chartOptions"
+                    [legend]="true"
+                  >
+                  </canvas>
+                </div>
+              </ng-template>
+            </li>
+            <li ngbNavItem>
+              <a ngbNavLink>
+                <h6 class="modal-title" id="modal-basic-title">
+                  Amortization Table
+                </h6>
+              </a>
+              <ng-template ngbNavContent>
+                <div>
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th *ngFor="let thId of displayedColumns" scope="col">
+                          {{ thId }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let item of groups">
+                      <tr *ngFor="let amortizationItem of item.members">
+                        <td>Month {{ amortizationItem.indexArray }}</td>
+                        <td>{{ amortizationItem.principalArray }}</td>
+                        <td>{{ amortizationItem.interestPaidArray }}</td>
+                        <!-- <td>{{amortizationItem.principalArray+amortizationItem.interestArray}}</td> -->
+                        <td>{{ amortizationItem.balanceRemainArray }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </ng-template>
+            </li>
+            <li ngbNavItem>
+              <a ngbNavLink>
+                <h6 class="modal-title" id="modal-basic-title">
+                  Principal Payment History
+                </h6>
+              </a>
+              <ng-template ngbNavContent>
+                <div>
+                  <canvas
+                    baseChart
+                    [type]="'line'"
+                    [datasets]="chartDataForPrincipal"
+                    [labels]="labelsForBar"
+                    [options]="chartOptions"
+                    [legend]="true"
+                  >
+                  </canvas>
+                </div>
+              </ng-template>
+            </li>
+          </ul>
+          <div [ngbNavOutlet]="nav"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-dark"
+          (click)="modal.close('Save click')"
+        >
+          Close
+        </button>
+      </div>
+    </ng-template>
+
+    <button class="btn btn-lg btn-outline-primary" (click)="open(content)">
+      View Graphs
+    </button>
+    <div></div>
+  </div>
+</div>
